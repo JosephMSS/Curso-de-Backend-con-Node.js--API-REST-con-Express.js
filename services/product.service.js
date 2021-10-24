@@ -1,13 +1,14 @@
 class ProductService {
   #faker;
+  #products;
   constructor(faker) {
     this.#faker = faker;
-    this.products = [];
+    this.#products = [];
     this.generate();
   }
   generate() {
     for (let i = 0; i < 100; i++) {
-      this.products.push({
+      this.#products.push({
         id: this.#faker.datatype.uuid(),
         name: this.#faker.commerce.productName(),
         price: parseInt(this.#faker.commerce.price(), 10),
@@ -16,10 +17,36 @@ class ProductService {
     }
   }
   find() {
-    return this.products;
+    return this.#products;
   }
   findOne(id) {
-    return this.products.find((item) => item.id == id);
+    return this.#products.find((item) => item.id == id);
+  }
+  create(data) {
+    const newProduct = {
+      id: this.#faker.datatype.uuid(),
+      ...data,
+    };
+    this.#products.push(newProduct);
+    return { newProduct };
+  }
+  update({ id, data }) {
+    const i = this.#products.findIndex((item) => item.id === id);
+    if (i === -1) {
+      throw new Error('Product not found');
+    }
+    const product = this.#products[1];
+    this.#products[i] = { ...product, ...data };
+    console.log('JMMS_this.#products[i]', this.#products[i]);
+    return { updatedProduct: this.#products[i] };
+  }
+  delete(id) {
+    const index = this.#products.findIndex((item) => item.id == id);
+    if (index === -1) {
+      throw new Error('Product not found');
+    }
+    this.#products.splice(index, 1);
+    return { id };
   }
 }
 module.exports = { ProductService };

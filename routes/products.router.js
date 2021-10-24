@@ -11,30 +11,33 @@ router.get('/filter', (req, res) => {
 router.get('/:id', (req, res) => {
   const { id } = req.params;
   const product = productService.findOne(id);
-  console.log('JMMS_product',product)
-  product?res.status(200).json(product):res.status(404).json({message:'Not found'});
+  product
+    ? res.status(200).json(product)
+    : res.status(404).json({ message: 'Not found' });
 });
 router.post('/', (req, res) => {
   const body = req.body;
+  const { newProduct } = productService.create(body);
   res.status(201).json({
     message: 'created',
-    data: body,
+    data: newProduct,
   });
 });
 router.patch('/:id', (req, res) => {
   const { id } = req.params;
   const body = req.body;
+  const { updatedProduct } = productService.update({ id, data: body });
   res.json({
     message: 'update',
-    data: body,
+    data: updatedProduct,
     id,
   });
 });
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
+  const { id: idDeleted } = productService.delete(id);
   res.json({
-    message: 'delete',
-    id,
+    id: idDeleted,
   });
 });
 module.exports = { productsRouter: router };
