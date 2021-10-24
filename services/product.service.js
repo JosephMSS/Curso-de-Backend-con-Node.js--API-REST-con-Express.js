@@ -17,12 +17,20 @@ class ProductService {
     }
   }
   find() {
-    return this.#products;
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(this.#products);
+      }, 5000);
+    });
   }
-  findOne(id) {
-    return this.#products.find((item) => item.id == id);
+  async findOne(id) {
+    const product = this.#products.find((item) => item.id == id);
+    if (!product) {
+      throw new Error('Product not found');
+    }
+    return product;
   }
-  create(data) {
+  async create(data) {
     const newProduct = {
       id: this.#faker.datatype.uuid(),
       ...data,
@@ -30,7 +38,7 @@ class ProductService {
     this.#products.push(newProduct);
     return { newProduct };
   }
-  update({ id, data }) {
+  async update({ id, data }) {
     const i = this.#products.findIndex((item) => item.id === id);
     if (i === -1) {
       throw new Error('Product not found');
@@ -40,7 +48,7 @@ class ProductService {
     console.log('JMMS_this.#products[i]', this.#products[i]);
     return { updatedProduct: this.#products[i] };
   }
-  delete(id) {
+  async delete(id) {
     const index = this.#products.findIndex((item) => item.id == id);
     if (index === -1) {
       throw new Error('Product not found');
