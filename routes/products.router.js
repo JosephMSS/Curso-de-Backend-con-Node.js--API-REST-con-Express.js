@@ -12,13 +12,13 @@ router.get('/', async (req, res) => {
 router.get('/filter', (req, res) => {
   res.send('Products filter');
 });
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const product = await productService.findOne(id);
     res.status(200).json(product);
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    next(error);
   }
 });
 router.post('/', async (req, res) => {
